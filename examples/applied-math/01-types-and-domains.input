@@ -1,0 +1,36 @@
+-- 01  Types and domains: the core idea of the Axiom language
+--
+-- Every Axiom value lives in a *domain* (a type such as Integer,
+-- Fraction Integer, Polynomial Integer, Matrix Float).  The same
+-- expression can mean different things in different domains, and you
+-- choose the domain with  ::  (convert) or  @  (pick a result type)
+-- or  $  (pick which domain's operation to use).
+)clear all
+
+-- Exact rational arithmetic (no rounding error)
+1/3 + 1/6
+-- The same number as a floating point value
+(1/3 + 1/6) :: Float
+-- Arbitrary precision: ask for 50 digits ('digits' returns the old value)
+digits 50
+sqrt(2.0)
+digits 20
+
+-- Integers modulo a prime (a finite field) - useful in coding theory
+a : PrimeField 7 := 3
+a^(-1)            -- inverse of 3 mod 7
+a^6               -- Fermat's little theorem gives 1
+
+-- Polynomials over different coefficient domains
+p := x^4 - 1
+factor p                                   -- over the integers
+factor(p :: Polynomial Complex Integer)    -- over the Gaussian integers
+
+-- Declaring a variable fixes its type; later values are converted
+r : Fraction Integer := 3
+r / 4
+
+-- Matrices are typed by their entries
+m : Matrix Fraction Integer := matrix [[2,1],[1,3]]
+inverse m
+determinant m

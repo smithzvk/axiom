@@ -1,0 +1,30 @@
+-- 06  Special functions, orthogonal polynomials, Gaussian quadrature
+)clear all
+
+-- Legendre polynomials P_n(x)
+[legendreP(n, x) for n in 0..4]
+
+-- Orthogonality on [-1,1]
+integrate(legendreP(2,x) * legendreP(4,x), x = -1..1)
+integrate(legendreP(3,x)^2, x = -1..1)          -- = 2/(2n+1)
+
+-- Three-point Gauss-Legendre rule: nodes are roots of P_3
+nodes := radicalSolve(legendreP(3, x) = 0, x)
+-- Weights w_i = 2 / ((1 - x_i^2) * P3'(x_i)^2)
+dP3 := D(legendreP(3, x), x)
+weights := [2 / ((1 - rhs(e)^2) * eval(dP3, x = rhs(e))^2) for e in nodes]
+-- Two 'for' clauses side by side iterate in PARALLEL (zip), not nested.
+-- The rule is exact for polynomials up to degree 5:
+gauss(h) == reduce(+, [w * eval(h, x = rhs(e)) for w in weights for e in nodes])
+gauss(x^4)
+integrate(x^4, x = -1..1)
+gauss(x^6)                            -- degree 6: no longer exact
+integrate(x^6, x = -1..1)
+
+-- Chebyshev and Hermite polynomials
+chebyshevT(5, x)
+hermiteH(4, x)
+
+-- Special functions evaluate numerically
+Gamma(0.5)^2                          -- = pi
+besselJ(0, 2.404825557695773)         -- near the first zero of J0

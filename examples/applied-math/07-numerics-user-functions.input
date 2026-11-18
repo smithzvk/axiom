@@ -1,0 +1,47 @@
+-- 07  Writing your own algorithms: Newton's method, recurrences, RK4
+--
+-- Axiom's interpreter is a full programming language.  Functions are
+-- defined with ==, loops with  for/while/repeat, and  +->  makes
+-- anonymous functions.
+)clear all
+
+-- Newton's method, generic in the function and its derivative.
+-- Works over Float, so the precision follows the 'digits' setting.
+newton(f, x0, n) ==
+  df := D(f, x)
+  xk := x0
+  for i in 1..n repeat
+    xk := xk - eval(f, x = xk) / eval(df, x = xk)
+  xk
+
+digits 40
+newton(x^2 - 2, 1.0, 7)
+sqrt(2.0)
+newton(cos(x) - x, 1.0, 8)            -- Dottie number
+digits 20
+
+-- Recurrences with memoisation:  f(n) == ...  with base cases
+fib(0) == 0
+fib(1) == 1
+fib(n | n > 1) == fib(n-1) + fib(n-2)
+fib 100
+
+-- Classical 4th order Runge-Kutta for y' = F(t,y), returning a list
+rk4(F, t0, y0, h, n) ==
+  t : Float := t0
+  y : Float := y0
+  out : List List Float := [[t, y]]
+  for i in 1..n repeat
+    k1 := F(t, y)
+    k2 := F(t + h/2, y + h/2*k1)
+    k3 := F(t + h/2, y + h/2*k2)
+    k4 := F(t + h, y + h*k3)
+    y := y + h/6*(k1 + 2*k2 + 2*k3 + k4)
+    t := t + h
+    out := concat(out, [t, y])
+  out
+
+-- y' = -2 t y, y(0)=1   (exact solution exp(-t^2))
+pts := rk4((t, y) +-> -2*t*y, 0.0, 1.0, 0.1, 10)
+last pts
+exp(-1.0)

@@ -1,0 +1,32 @@
+-- 03  Ordinary differential equations: a forced, damped oscillator
+--
+--   m y'' + c y' + k y = F cos(w t)
+)clear all
+y := operator 'y
+
+-- Free (unforced) damped oscillator, symbolic coefficients
+freeOsc := m*D(y(t), t, 2) + c*D(y(t), t) + k*y(t) = 0
+solve(freeOsc, y, t)
+
+-- Concrete underdamped case with initial conditions y(0)=1, y'(0)=0
+ode := D(y(t), t, 2) + 2*D(y(t), t) + 5*y(t) = 0
+sol := solve(ode, y, t = 0, [1, 0])
+
+-- Check: substitute the solution back into the equation
+yt := sol
+simplify(D(yt, t, 2) + 2*D(yt, t) + 5*yt)
+
+-- Resonance: undamped spring driven at its natural frequency
+res := D(y(t), t, 2) + 4*y(t) = cos(2*t)
+solve(res, y, t = 0, [0, 0])
+simplify %                               -- amplitude grows like t*sin(2t)
+
+-- Nonlinear first-order equation: logistic population growth
+logistic := D(y(t), t) = r*y(t)*(1 - y(t)/K)
+-- The answer is an implicit first integral: the expression below is
+-- constant along solutions, i.e.  log((y - K)/y) + r t = C
+solve(logistic, y, t)
+
+-- Power-series solution about t=0 (works when no closed form exists)
+-- Airy equation y'' = t y with y(0)=1, y'(0)=0
+seriesSolve(D(y(t), t, 2) - t*y(t), y, t = 0, [1, 0])

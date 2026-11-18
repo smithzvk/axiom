@@ -1,0 +1,28 @@
+-- 02  Calculus: limits, derivatives, closed-form integrals, series
+)clear all
+
+-- Derivatives (D is the differentiation operator)
+f := exp(-x^2) * sin(a*x)
+D(f, x)
+D(f, x, 2)
+
+-- Limits, including one-sided ones
+limit(sin(x)/x, x = 0)
+limit((1 + r/n)^n, n = %plusInfinity)     -- continuous compounding
+limit(1/x, x = 0, "right")
+
+-- Symbolic integration (Risch algorithm: it either finds an elementary
+-- antiderivative or proves none exists)
+integrate(1/(x^3 + 1), x)
+integrate(x * exp(x) * cos(x), x)
+integrate(exp(-x^2), x)                   -- not elementary: answered with erf
+integrate(exp(-x^2), x = %minusInfinity..%plusInfinity, "noPole")
+
+-- Taylor / Laurent / Puiseux series are lazy, infinite objects
+s := series(sin(x)/x, x = 0)
+coefficient(s, 10)
+series(1/(1 - x - x^2), x = 0)            -- Fibonacci generating function
+series(sqrt(x + x^2), x = 0)              -- fractional powers (Puiseux)
+
+-- Sums in closed form
+sum(k^3, k = 1..n)

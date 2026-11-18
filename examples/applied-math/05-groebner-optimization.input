@@ -1,0 +1,25 @@
+-- 05  Polynomial systems and Groebner bases: constrained optimisation
+--
+-- Maximise f = x*y*z on the sphere x^2+y^2+z^2 = 3 with Lagrange
+-- multipliers.  The stationarity conditions are polynomial, so a
+-- Groebner basis turns them into a triangular system we can solve exactly.
+)clear all
+
+f := x*y*z
+g := x^2 + y^2 + z^2 - 3
+eqs := [D(f,x) - L*D(g,x), D(f,y) - L*D(g,y), D(f,z) - L*D(g,z), g]
+
+-- Lexicographic Groebner basis (variables ordered L > x > y > z)
+gb := groebner(eqs :: List DistributedMultivariatePolynomial([L,x,y,z], Fraction Integer))
+
+-- Solve the whole system exactly.  radicalSolve expresses every
+-- root with radicals (plain 'solve' would leave x^2-3=0 unsolved)
+sols := radicalSolve(eqs, [L, x, y, z])
+-- Evaluate the objective at every critical point
+[eval(f, s) for s in sols]
+
+-- Intersection of two conics (e.g. locating two radio sources)
+solve([x^2 + y^2 = 25, (x - 4)^2 + y^2 = 9], [x, y])
+
+-- Numerical roots of a polynomial system to a given precision
+solve([x^2 - y - 1 = 0, x + y^2 - 2 = 0], 1.e-12)

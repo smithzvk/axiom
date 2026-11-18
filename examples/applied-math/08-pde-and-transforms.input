@@ -1,0 +1,28 @@
+-- 08  PDEs and integral transforms
+)clear all
+
+-- Verify that a candidate solves the 1-D heat equation u_t = k u_xx
+u := exp(-k*n^2*%pi^2*t) * sin(n*%pi*x)
+D(u, t) - k*D(u, x, 2)
+
+-- Fundamental solution (heat kernel)
+G := exp(-x^2/(4*k*t)) / sqrt(4*%pi*k*t)
+simplify(D(G, t) - k*D(G, x, 2))
+
+-- d'Alembert: any f(x - c t) + g(x + c t) solves the wave equation
+f := operator 'f
+g := operator 'g
+w := f(x - c*t) + g(x + c*t)
+D(w, t, 2) - c^2*D(w, x, 2)
+
+-- Laplace transforms turn ODEs into algebra
+laplace(exp(-a*t)*sin(b*t), t, s)
+laplace(t^3, t, s)
+laplace(cos(omega*t), t, s)
+
+-- Fourier sine coefficients of f(x) = x(1 - x) on [0,1]
+-- Work symbolically in n: antiderivative, then evaluate at the ends
+F := integrate(x*(1 - x)*sin(n*%pi*x), x)
+bn := 2*(eval(F, x = 1) - eval(F, x = 0))
+-- For integer n, sin(n pi) = 0 and cos(n pi) = (-1)^n
+[eval(bn, n = j) for j in 1..4]

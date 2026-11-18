@@ -1,0 +1,39 @@
+)abbrev package QUADPK SimpleQuadrature
+++ Description:
+++ A small example of the SPAD library language: a package of composite
+++ quadrature rules that works over ANY floating-point-like domain R
+++ (Float, DoubleFloat, ...).  Compare with the interpreter examples in
+++ the .input files: here every type is declared, and the code is
+++ compiled once and checked statically.
+SimpleQuadrature(R : Join(Field, TranscendentalFunctionCategory)) : Exports == Implementation where
+  Exports ==> with
+    trapezoid : (R -> R, R, R, PositiveInteger) -> R
+      ++ trapezoid(f, a, b, n) is the composite trapezoid rule with n panels.
+    simpson : (R -> R, R, R, PositiveInteger) -> R
+      ++ simpson(f, a, b, n) is composite Simpson's rule; n is rounded up
+      ++ to an even number of panels.
+    richardson : (R -> R, R, R, PositiveInteger) -> R
+      ++ richardson(f, a, b, n) combines trapezoid rules with n and 2n
+      ++ panels to cancel the O(h^2) error term (one Romberg step).
+
+  Implementation ==> add
+    trapezoid(f, a, b, n) ==
+      h := (b - a) / (n :: R)
+      s := (f(a) + f(b)) / (2 :: R)
+      for i in 1..(n - 1) repeat
+        s := s + f(a + (i :: R) * h)
+      h * s
+
+    simpson(f, a, b, n) ==
+      m : PositiveInteger := (odd? n => n + 1; n)
+      h := (b - a) / (m :: R)
+      s := f(a) + f(b)
+      for i in 1..(m - 1) repeat
+        w : R := (odd? i => 4 :: R; 2 :: R)
+        s := s + w * f(a + (i :: R) * h)
+      h * s / (3 :: R)
+
+    richardson(f, a, b, n) ==
+      t1 := trapezoid(f, a, b, n)
+      t2 := trapezoid(f, a, b, 2 * n)
+      ((4 :: R) * t2 - t1) / (3 :: R)

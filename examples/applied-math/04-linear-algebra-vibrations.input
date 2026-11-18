@@ -1,0 +1,32 @@
+-- 04  Linear algebra: normal modes of coupled masses
+--
+-- Three equal masses on a line joined by four equal springs (fixed
+-- walls).  Newton's law gives  x'' = -(k/m) A x  with the stiffness
+-- matrix A below.  Normal-mode frequencies are sqrt(k/m * eigenvalue).
+)clear all
+
+A := matrix [[2,-1,0],[-1,2,-1],[0,-1,2]]
+
+characteristicPolynomial(A, lambda)
+factor %
+
+-- Exact eigenvalues (as radicals) and eigenvectors
+radicalEigenvalues A
+radicalEigenvectors A
+
+-- Numerical eigenvalues to 20 digits
+realEigenvalues(A, 1.e-20)
+
+-- Symmetric => orthogonal eigenvectors; verify one dot product
+v1 := vector [1, sqrt 2, 1]
+v2 := vector [1, 0, -1]
+dot(v1, v2)
+
+-- Solving linear systems  A x = b  exactly
+b := vector [1, 0, 1]
+solve(A, b)
+
+-- Symbolic matrices: a parametrised system and its determinant
+B := matrix [[a, 1, 0],[1, a, 1],[0, 1, a]]
+factor determinant B
+nullSpace(eval(B, a = sqrt(2)))

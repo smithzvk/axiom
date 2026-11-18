@@ -1,0 +1,26 @@
+-- 10  Extending the system: compile a SPAD package and use it
+--
+-- The interpreter language (files 01-09) is for interactive work.
+-- The library itself is written in SPAD, a statically typed language
+-- in which you define new categories, domains and packages.
+-- Quadrature.spad defines SimpleQuadrature(R), generic in the number type.
+)clear all
+)compile Quadrature.spad
+
+f : DoubleFloat -> DoubleFloat
+f x == exp(-x^2)
+
+-- Integrate exp(-x^2) on [0,1]; the exact value is sqrt(pi)/2 * erf(1)
+trapezoid(f, 0, 1, 10)$SimpleQuadrature(DoubleFloat)
+simpson(f, 0, 1, 10)$SimpleQuadrature(DoubleFloat)
+richardson(f, 0, 1, 10)$SimpleQuadrature(DoubleFloat)
+integrate(exp(-x^2), x = 0..1, "noPole")      -- symbolic: erf(1) sqrt(pi)/2
+-- Reference value from the Taylor series  sum (-1)^k / (k! (2k+1))
+reduce(+, [((-1)^k / (factorial(k)*(2*k+1))) :: Float for k in 0..25])
+
+-- The same package instantiated over arbitrary-precision Float
+digits 30
+g : Float -> Float
+g x == exp(-x^2)
+simpson(g, 0, 1, 200)$SimpleQuadrature(Float)
+digits 20
