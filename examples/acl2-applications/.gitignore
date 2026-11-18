@@ -1,0 +1,7 @@
+*.cert
+*.o
+*.port
+*.out
+*.fasl
+*.lx64fsl
+*.cert.out

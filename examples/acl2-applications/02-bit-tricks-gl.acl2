@@ -1,0 +1,3 @@
+; Forms run before certification: GL defines its own package.
+(include-book "centaur/gl/portcullis" :dir :system)
+; cert-flags: ? t :ttags :all
